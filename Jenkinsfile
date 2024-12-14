@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'olyfaneva/front-test'
+        DOCKER_IMAGE = 'olyfaneva/front-end'
         DOCKER_TAG = 'latest'
         REPO_URL = 'https://github.com/OlyFaneva/testcicdnuxt.git'
         SSH_CREDENTIALS = credentials('vps')
@@ -29,24 +29,16 @@ pipeline {
             }
         }
 
-        stage('Test Image') {
+        stage('Scan Docker Image') {
             steps {
-                echo 'Testing the previously built image...'
-                sh '''
-                docker run --rm front-test:latest sh -c "
-                    echo 'Running tests...' &&
-                    ls -la /app &&
-                    ls -la /app/package.json &&
-                    yarn test"
-                '''
+                script {
+                    echo 'Scanning Docker image for vulnerabilities'
+                    sh '''
+                trivy image ${DOCKER_IMAGE}:${DOCKER_TAG} || exit 1
+            '''
+                }
             }
         }
-    }
-    post {
-        always {
-            cleanWs()  // Nettoyer l'espace de travail
-        }
-    }
 
         stage('Push to Docker Hub') {
             steps {
@@ -71,4 +63,5 @@ pipeline {
                 }
             }
         }
+    }
 }
