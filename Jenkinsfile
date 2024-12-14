@@ -26,19 +26,11 @@ pipeline {
                     // Construire une image temporaire
                     sh 'docker build -t temp-build .'
 
-                    // Vérifiez d'abord si package.json est présent
-                    sh '''
-            if [ -f package.json ]; then
-                echo "package.json found."
-            else
-                echo "Error: package.json not found."
-                exit 1
-            fi
-            '''
-
                     // Lancer le conteneur Node.js
                     sh '''
             docker run --rm -v ${WORKSPACE}:/app -w /app node:18-alpine sh -c "
+                echo 'Contents of /app:' &&
+                ls -la /app &&
                 yarn install &&
                 yarn run test
             "
