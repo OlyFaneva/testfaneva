@@ -22,10 +22,18 @@ pipeline {
             steps {
                 script {
                     echo "Installing dependencies and running tests"
+                    // Affiche le contenu du répertoire pour vérifier la présence de package.json
+                    sh 'ls -la'
+
+                    // Installer les dépendances et exécuter les tests
                     sh '''
                         docker run --rm -v $PWD:/app -w /app node:18-alpine sh -c "
-                            yarn install &&
-                            yarn test
+                            if [ -f package.json ]; then
+                                yarn install &&
+                                yarn test
+                            else
+                                echo 'Error: package.json not found' && exit 1
+                            fi
                         "
                     '''
                 }
@@ -48,8 +56,8 @@ pipeline {
                 script {
                     echo 'Scanning Docker image for vulnerabilities'
                     sh '''
-                trivy image ${DOCKER_IMAGE}:${DOCKER_TAG} || exit 1
-            '''
+                        trivy image ${DOCKER_IMAGE}:${DOCKER_TAG} || exit 1
+                    '''
                 }
             }
         }
