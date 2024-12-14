@@ -37,6 +37,7 @@ pipeline {
                     // Lancer le conteneur Node.js  
                     sh '''  
                     docker run --rm -v ${WORKSPACE}:/app -w /app node:18-alpine sh -c "  
+                        copy package*.json ./
                         echo 'Contents of /app:' &&  
                         ls -la /app &&  
                         yarn install &&  
