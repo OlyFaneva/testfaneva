@@ -18,12 +18,12 @@ pipeline {
             }
         }
 
-        // Ajoutez ceci pour vérifier le contenu après le clonage
+        // Ajout de cette étape pour vérifier le contenu après le clonage
         stage('Check Repository Contents') {
             steps {
                 script {
                     echo 'Checking repository contents after cloning:'
-                    sh 'ls -la'
+                    sh 'ls -la' // Vérifiez si package.json est présent
                 }
             }
         }
@@ -33,21 +33,15 @@ pipeline {
                 script {
                     echo 'Installing dependencies and running tests'
 
-                    // Construire une image temporaire
-                    sh 'docker build -t temp-build .'
-
                     // Lancer le conteneur Node.js
                     sh '''
                     docker run --rm -v ${WORKSPACE}:/app -w /app node:18-alpine sh -c "
                         echo 'Contents of /app:' &&
-                        ls -la /app &&
+                        ls -la /app &&  // Lister les fichiers pour déboguer
                         yarn install &&
-                        yarn run test
+                        yarn test
                     "
                     '''
-
-                    // Supprimer l'image temporaire si elle a été créée
-                    sh 'docker rmi temp-build --force || true'
                 }
             }
         }
