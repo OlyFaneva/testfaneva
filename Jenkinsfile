@@ -22,7 +22,25 @@ pipeline {
             steps {
                 script {
                     echo 'Checking repository contents after cloning:'
-                    sh 'ls -la' // Vérifie si package.json est présent
+                    sh 'ls -la'
+                }
+            }
+        }
+
+        stage('Check Yarn Version') {
+            steps {
+                script {
+                    echo 'Checking Yarn version...'
+                    sh 'yarn --version' // Vérifiez si Yarn est installé
+                }
+            }
+        }
+
+        stage('Install Yarn') {
+            steps {
+                script {
+                    echo 'Installing Yarn...'
+                    sh 'npm install -g yarn' // Installer Yarn si nécessaire
                 }
             }
         }
