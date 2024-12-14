@@ -18,6 +18,7 @@ pipeline {
             }
         }
 
+        // Ajoutez ceci pour vérifier le contenu après le clonage
         stage('Check Repository Contents') {
             steps {
                 script {
@@ -27,38 +28,26 @@ pipeline {
             }
         }
 
-        stage('Check Yarn Version') {
+        stage('Install Dependencies and Test') {
             steps {
                 script {
-                    echo 'Checking Yarn version...'
-                    sh 'yarn --version' // Vérifiez si Yarn est installé
-                }
-            }
-        }
+                    echo 'Installing dependencies and running tests'
 
-        stage('Install Yarn') {
-            steps {
-                script {
-                    echo 'Installing Yarn...'
-                    sh 'npm install -g yarn' // Installer Yarn si nécessaire
-                }
-            }
-        }
+                    // Construire une image temporaire
+                    sh 'docker build -t temp-build .'
 
-        stage('Install Dependencies') {
-            steps {
-                script {
-                    echo 'Installing dependencies...'
-                    sh 'yarn install'
-                }
-            }
-        }
+                    // Lancer le conteneur Node.js
+                    sh '''
+                    docker run --rm -v ${WORKSPACE}:/app -w /app node:18-alpine sh -c "
+                        echo 'Contents of /app:' &&
+                        ls -la /app &&
+                        yarn install &&
+                        yarn run test
+                    "
+                    '''
 
-        stage('Run Tests') {
-            steps {
-                script {
-                    echo 'Running tests...'
-                    sh 'yarn test'
+                    // Supprimer l'image temporaire si elle a été créée
+                    sh 'docker rmi temp-build --force || true'
                 }
             }
         }
