@@ -21,21 +21,25 @@ pipeline {
         stage('Install Dependencies and Test') {
             steps {
                 script {
-                    echo "Installing dependencies and running tests"
-                    // Affiche le contenu du répertoire pour vérifier la présence de package.json
-                    sh 'ls -la'
+                    echo 'Installing dependencies and running tests'
 
-                    // Installer les dépendances et exécuter les tests
+                    // Construire une image temporaire
                     sh '''
-                        docker run --rm -v $PWD:/app -w /app node:18-alpine sh -c "
-                            if [ -f package.json ]; then
-                                yarn install &&
-                                yarn test
-                            else
-                                echo 'Error: package.json not found' && exit 1
-                            fi
-                        "
-                    '''
+                docker build -t temp-build .
+            '''
+
+                    // Lancer un conteneur temporaire pour exécuter les tests
+                    sh '''
+                docker run --rm -v $PWD:/app -w /app temp-build sh -c "
+                    yarn install &&
+                    yarn test
+                "
+            '''
+
+                    // Supprimer l'image temporaire après les tests
+                    sh '''
+                docker rmi temp-build --force
+            '''
                 }
             }
         }
