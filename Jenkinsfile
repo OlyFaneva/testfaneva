@@ -18,14 +18,16 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
+        stage('Install Dependencies and Test') {
             steps {
                 script {
-                    echo 'Running Nuxt.js Tests with Yarn'
+                    echo "Installing dependencies and running tests"
                     sh '''
-                yarn install
-                yarn test
-            '''
+                        docker run --rm -v $PWD:/app -w /app node:18-alpine sh -c "
+                            yarn install &&
+                            yarn test
+                        "
+                    '''
                 }
             }
         }
