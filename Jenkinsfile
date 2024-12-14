@@ -29,26 +29,14 @@ pipeline {
             }
         }
 
-        stage('Install Dependencies and Test') {
+        stage('Run Tests') {
             steps {
                 script {
-                    echo 'Installing dependencies and running tests'
-
-                    // Construire une image temporaire
-                    sh 'docker build -t temp-build .'
-
-                    // Lancer le conteneur Node.js
+                    echo 'Running Nuxt.js Tests with Yarn'
                     sh '''
-            docker run --rm -v ${WORKSPACE}:/app -w /app node:18-alpine sh -c "
-                echo 'Contents of /app:' &&
-                ls -la /app &&
-                yarn install &&
-                yarn run test
-            "
+                yarn install
+                yarn test
             '''
-
-                    // Supprimer l'image temporaire si elle a été créée
-                    sh 'docker rmi temp-build --force || true'
                 }
             }
         }
