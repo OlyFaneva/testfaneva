@@ -23,22 +23,26 @@ pipeline {
                 script {
                     echo 'Installing dependencies and running tests'
 
-                    // Construire une image temporaire
+                    // Construire une image temporaire si nécessaire
                     sh '''
                 docker build -t temp-build .
             '''
 
-                    // Lancer un conteneur temporaire pour exécuter les tests
+                    // Lancer un conteneur Node.js temporaire pour exécuter npm install et npm run test
                     sh '''
-                docker run --rm -v $PWD:/app -w /app temp-build sh -c "
-                    yarn install &&
-                    yarn test
+                docker run --rm -v $PWD:/app -w /app node:18-alpine sh -c "
+                    if [ -f package.json ]; then
+                        yarn install &&
+                        yarn run test
+                    else
+                        echo 'Error: package.json not found' && exit 1
+                    fi
                 "
             '''
 
-                    // Supprimer l'image temporaire après les tests
+                    // Supprimer l'image temporaire (si elle a été créée)
                     sh '''
-                docker rmi temp-build --force
+                docker rmi temp-build --force || true
             '''
                 }
             }
