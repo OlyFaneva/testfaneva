@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'olyfaneva/front-end'
+        DOCKER_IMAGE = 'olyfaneva/front-test'
         DOCKER_TAG = 'latest'
         REPO_URL = 'https://github.com/OlyFaneva/testcicdnuxt.git'
         SSH_CREDENTIALS = credentials('vps')
