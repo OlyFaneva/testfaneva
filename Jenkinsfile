@@ -26,17 +26,23 @@ pipeline {
                     // Construire une image temporaire
                     sh 'docker build -t temp-build .'
 
-                    // Lancer le conteneur Node.js pour exécuter yarn install et yarn run test
+                    // Vérifiez d'abord si package.json est présent
                     sh '''
-                    docker run --rm -v ${WORKSPACE}:/app -w /app node:18-alpine sh -c "
-                        if [ -f package.json ]; then
-                            yarn install &&
-                            yarn run test
-                        else
-                            echo 'Error: package.json not found' && exit 1
-                        fi
-                    "
-                    '''
+            if [ -f package.json ]; then
+                echo "package.json found."
+            else
+                echo "Error: package.json not found."
+                exit 1
+            fi
+            '''
+
+                    // Lancer le conteneur Node.js
+                    sh '''
+            docker run --rm -v ${WORKSPACE}:/app -w /app node:18-alpine sh -c "
+                yarn install &&
+                yarn run test
+            "
+            '''
 
                     // Supprimer l'image temporaire si elle a été créée
                     sh 'docker rmi temp-build --force || true'
