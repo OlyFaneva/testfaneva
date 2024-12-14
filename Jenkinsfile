@@ -33,9 +33,9 @@ pipeline {
                 script {  
                     echo 'Installing dependencies and running tests'  
 
-                    // Lancer le conteneur Node.js avec un utilisateur approprié  
+                    // Lancer le conteneur Node.js avec root pour le débogage  
                     sh '''  
-                    docker run --rm -v ${WORKSPACE}:/app -w /app --user node node:18-alpine sh -c "  
+                    docker run --rm -v ${WORKSPACE}:/app -w /app --user root node:18-alpine sh -c "  
                         echo 'Contents of /app:' &&  
                         ls -la /app &&  
                         ls -la /app/package.json &&  // Vérifie les permissions de package.json  
