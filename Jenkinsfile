@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'olyfaneva/front-end'
+        DOCKER_IMAGE = 'olyfaneva/front-test'
         DOCKER_TAG = 'latest'
         REPO_URL = 'https://github.com/OlyFaneva/testcicdnuxt.git'
         SSH_CREDENTIALS = credentials('vps')
@@ -29,17 +29,19 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
+       stage('Test Image') {
             steps {
-                script {
-                    echo 'Running Nuxt.js Tests with Yarn'
-                    sh '''
-                yarn install
-                yarn test
-            '''
-                }
+                echo 'Testing the previously built image...'
+                sh '''
+                docker run --rm front-test:latest sh -c "
+                    echo 'Running tests...' &&
+                    ls -la /app &&
+                    ls -la /app/package.json &&
+                    yarn test"
+                '''
             }
-        }
+       }
+    }
 
         stage('Push to Docker Hub') {
             steps {
@@ -64,5 +66,5 @@ pipeline {
                 }
             }
         }
-    }
 }
+
