@@ -29,7 +29,7 @@ pipeline {
             }
         }
 
-       stage('Test Image') {
+        stage('Test Image') {
             steps {
                 echo 'Testing the previously built image...'
                 sh '''
@@ -40,7 +40,12 @@ pipeline {
                     yarn test"
                 '''
             }
-       }
+        }
+    }
+    post {
+        always {
+            cleanWs()  // Nettoyer l'espace de travail
+        }
     }
 
         stage('Push to Docker Hub') {
@@ -67,4 +72,3 @@ pipeline {
             }
         }
 }
-
