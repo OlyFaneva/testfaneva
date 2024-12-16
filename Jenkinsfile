@@ -93,21 +93,6 @@ pipeline {
             }  
         }  
 
-        stage('Deploy Frontend to VPS') {  
-            steps {  
-                script {  
-                    echo 'Deploying Frontend to VPS'  
-                    sh '''  
-                        sshpass -p "${SSH_CREDENTIALS_PSW}" ssh -o StrictHostKeyChecking=no ${SSH_CREDENTIALS_USR}@89.116.111.200 << EOF  
-                        docker pull ${DOCKER_IMAGE_FRONTEND}:${DOCKER_TAG}  
-                        docker stop front-end || true  
-                        docker rm front-end || true  
-                        docker run -d --name front-end -p 8080:3002 ${DOCKER_IMAGE_FRONTEND}:${DOCKER_TAG}  
-EOF  
-                    '''  
-                }  
-            }  
-        }  
 
         stage('Run Ansible Playbook for Deployment') {  
             steps {  
