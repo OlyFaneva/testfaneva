@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'olyfaneva/front-test'
         DOCKER_TAG = 'latest'
-        REPO_URL = 'https://github.com/OlyFaneva/testcicdnuxt.git'
+        REPO_URL = 'https://github.com/OlyFaneva/testfaneva.git'
         SSH_CREDENTIALS = credentials('vps')
     }
 
