@@ -58,42 +58,6 @@ pipeline {
             }  
         }  
 
-        stage('Build Test Docker Image') {  
-            steps {  
-                script {  
-                    echo "Building Test Docker image: ${DOCKER_IMAGE_TEST}:${DOCKER_TAG}"  
-                    sh '''  
-                        docker build -t ${DOCKER_IMAGE_TEST}:${DOCKER_TAG} .  
-                    '''  
-                }  
-            }  
-        }  
-
-        stage('Scan Test Docker Image') {  
-            steps {  
-                script {  
-                    echo 'Scanning Test Docker image for vulnerabilities'  
-                    sh '''  
-                        trivy image ${DOCKER_IMAGE_TEST}:${DOCKER_TAG} || exit 1  
-                    '''  
-                }  
-            }  
-        }  
-
-        stage('Push Test to Docker Hub') {  
-            steps {  
-                script {  
-                    echo 'Pushing Test Docker image to Docker Hub'  
-                    withDockerRegistry([credentialsId: 'docker', url: 'https://index.docker.io/v1/']) {  
-                        sh '''  
-                            docker push ${DOCKER_IMAGE_TEST}:${DOCKER_TAG}  
-                        '''  
-                    }  
-                }  
-            }  
-        }  
-
-
         stage('Run Ansible Playbook for Deployment') {  
             steps {  
                 script {  
