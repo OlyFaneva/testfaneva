@@ -29,3 +29,8 @@
         restart_policy: always
         ports:
           - "3003:3000"
+
+     - name: Clean up unused Docker objects  
+      shell: docker system prune -f  
+      args:  
+        warn: false 

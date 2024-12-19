@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'olyfaneva/front-test'
         DOCKER_TAG = 'latest'
-        REPO_URL = 'https://github.com/OlyFaneva/testfaneva.git'
+        REPO_URL = 'https://github.com/OlyFaneva/testcicdnuxt.git'
         SSH_CREDENTIALS = credentials('vps')
     }
 
@@ -17,9 +17,6 @@ pipeline {
                 }
             }
         }
-
-        
-
 
         stage('Build Docker Image') {
             steps {
@@ -67,32 +64,4 @@ pipeline {
             }
         }
     }
-
-    post {  
-        always {  
-            script {  
-                def buildStatus = currentBuild.currentResult  
-
-                emailext(  
-                    subject: "Pipeline ${env.JOB_NAME} - Build ${env.BUILD_NUMBER} : ${buildStatus}",  
-                    body: """  
-                    Bonjour,  
-
-                    Voici les détails de l'exécution du pipeline :  
-
-                    - **Nom du Job** : ${env.JOB_NAME}  
-                    - **Numéro du Build** : ${env.BUILD_NUMBER}  
-                    - **Statut du Build** : ${buildStatus}  
-                    - **URL du Build** : ${env.BUILD_URL}  
-
-                    Merci,  
-                    L'équipe Jenkins  
-                    """,  
-                    to: "olyrarivomanana@gmail.com",  
-                    mimeType: 'text/html',  
-                    replyTo: 'no-reply@gmail.com'  
-                )  
-            }  
-        }  
-    } 
 }

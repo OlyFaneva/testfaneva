@@ -19,7 +19,7 @@ COPY . .
 # Construire le projet Nuxt.js
 RUN yarn build
 
-# Changer ny permissions mba hahafahan'ilay utilisateur non-root miasa
+# Changer ny permissions pour que l'utilisateur non-root fonctionne
 RUN chown -R appuser:appgroup /app
 
 # Manondro ny mpampiasa hampiasa ny container
